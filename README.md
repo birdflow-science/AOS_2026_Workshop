@@ -17,7 +17,7 @@ please do the following:
 
 ```
 4. If you have institutional access to [Eduroam wifi](https://eduroam.org/)
-   check that it is installed and working on your laptop.
+   check that it is installed and working on your laptop. We also have guest wifi credentials that you should have received in an email and we can share at the workshop.
 
 ## Outline
 * 12:30–1:00 Optional installation help
