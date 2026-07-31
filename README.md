@@ -13,7 +13,7 @@ and quantify movement rates among arbitrary polygons such as states or counties.
 To prepare for the workshop or to work through these materials on your own 
 please do the following:
 1. Install R, RStudio, and BirdFlowR [using the "Standard Install" instructions](https://birdflow-science.github.io/BirdFlowR/articles/Installation.html#standard-install).
-2. Download the workshop examples and data from this github page by clicking the green "<> Code" button near the top of the page and then selecting "Download Zip".
+2. Download the workshop examples and data from this github page by clicking the green "<> Code" button near the top of the page and then selecting "Download Zip". If you don't see it make sure you are on the [main github page for the workshop](https://github.com/birdflow-science/AOS_2026_Workshop).
 3. Run the following code in R or RStudio to install other packages used in the workshop but not required by BirdFlowR itself:
 ```
 
