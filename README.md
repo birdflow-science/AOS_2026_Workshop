@@ -1,6 +1,8 @@
 # AOS_2026_Workshop
 Supporting materials for the AOS Workshop: Modeling bird movement with eBird and BirdFlowR
 
+[Google doc page where you can type questions during the meeting.](https://docs.google.com/document/d/1ljsKB-lxMzf0NuCdcREeYlk_ajjlkixQvVzbOKEEmlE/edit?tab=t.0)
+
 ## Objective
 To introduce users to the BirdFlowR R package and demonstrate how they can use it to 
 visualize bird movement, generate synthetic routes, 
