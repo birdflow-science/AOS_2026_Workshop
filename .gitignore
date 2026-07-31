@@ -1,3 +1,7 @@
 /dev/
 .DS_Store
+.Rhistory
 .Rproj.user
+
+# Rendered output at the top level (source .Rmd files are tracked)
+/*.html
