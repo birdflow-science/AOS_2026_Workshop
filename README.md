@@ -26,9 +26,9 @@ please do the following:
 * 1:00–1:10 Introduction to team and welcome
 * 1:10–1:25 Introduction to BirdFlow  - Dan Sheldon
 * 1:25–1:50 High-level walk through of R package with follow-along examples - Ethan Plunkett
-* 1:50–2:20 Structured activity. Participants can pick a species of their choice and
+* 1:50–2:15 Structured activity. Participants can pick a species of their choice and
 interrogate the model.  - Ethan Plunkett
-* 2:20–2:30 Break
+* 2:15–2:30 Break
 * 2:30–3:00 Inferring population-specific phenology within the areas of interest - Yangkang Chen
 * 3:00–3:30 Restructuring model movement data to correspond to specific regions (polygons) and time frames - Ethan Plunkett
 * 3:30–4:00 Migratory connectivity comparing BirdFlow derived MC with tracking data derived MC  - Yuting Deng
