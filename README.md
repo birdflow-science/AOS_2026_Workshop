@@ -16,20 +16,10 @@ please do the following:
 2. Download the workshop examples and data from this github page by clicking the green "<> Code" button near the top of the page and then selecting "Download Zip". If you don't see it make sure you are on the [main github page for the workshop](https://github.com/birdflow-science/AOS_2026_Workshop).
 3. Run the following code in R or RStudio to install other packages used in the workshop but not required by BirdFlowR itself:
 ```r
-cran_packages <- c(
-  "remotes",
-  "RColorBrewer",
-  "patchwork",
-  "cowplot",
-  "rmarkdown",
-  "knitr"
-)
-
-missing_cran <- cran_packages[!cran_packages %in% rownames(installed.packages())]
-
-if (length(missing_cran) > 0) {
-  install.packages(missing_cran, repos = "https://cloud.r-project.org")
-}
+installed <- rownames(installed.packages())
+additional_packages <- c("remotes", "RColorBrewer", "patchwork", "cowplot",
+                         "tibble", "readr", "purrr", "janitor")
+install.packages(setdiff(additional_packages, installed))
 ```
 
 4. If you have institutional access to [Eduroam wifi](https://eduroam.org/)
@@ -47,8 +37,12 @@ interrogate the model.  - Ethan Plunkett
 * 3:00–3:30 Restructuring model movement data to correspond to specific regions (polygons) and time frames - Ethan Plunkett
 * 3:30–4:00 Migratory connectivity comparing BirdFlow derived MC with tracking data derived MC  - Yuting Deng
 
-## Files
-* 
+## Key Markdown Files
+* 1_package_overview/package_overview.Rmd 
+* 2_Migration_phenology/birdflow_phenology.Rmd
+* 3_restructuring_movement/restructuring_movement.Rmd
+* 4_Migration_connectivity/AOS Workshop_Connectivity.Rmd
 
-
+Each also has a corresponding `.html` file which shows the 
+output without installing softare or running code. 
 
