@@ -15,9 +15,23 @@ please do the following:
 1. Install R, RStudio, and BirdFlowR [using the "Standard Install" instructions](https://birdflow-science.github.io/BirdFlowR/articles/Installation.html#standard-install).
 2. Download the workshop examples and data from this github page by clicking the green "<> Code" button near the top of the page and then selecting "Download Zip". If you don't see it make sure you are on the [main github page for the workshop](https://github.com/birdflow-science/AOS_2026_Workshop).
 3. Run the following code in R or RStudio to install other packages used in the workshop but not required by BirdFlowR itself:
+```r
+cran_packages <- c(
+  "remotes",
+  "RColorBrewer",
+  "patchwork",
+  "cowplot",
+  "rmarkdown",
+  "knitr"
+)
+
+missing_cran <- cran_packages[!cran_packages %in% rownames(installed.packages())]
+
+if (length(missing_cran) > 0) {
+  install.packages(missing_cran, repos = "https://cloud.r-project.org")
+}
 ```
 
-```
 4. If you have institutional access to [Eduroam wifi](https://eduroam.org/)
    check that it is installed and working on your laptop. We also have guest wifi credentials that you should have received in an email and we can share at the workshop.
 
