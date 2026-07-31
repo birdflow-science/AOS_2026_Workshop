@@ -13,10 +13,14 @@ editor_options:
 <style type="text/css">
   body {
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-    font-size: 20px;
+    font-size: 18px;
   }
   h1 {
     font-size: 28px;
+    color: #2c3e50;
+  }
+  h2 {
+    font-size: 24px;
     color: #2c3e50;
   }
   code.r {
@@ -327,7 +331,7 @@ ggplot(results_df, aes(x = date, y = MC)) +
 
 ## Migration Connectivity Spatial Pattern -- Transition probabilities between Bird Conservation Regions
 
-migratory connectivity as the relative proportions of individuals migrating between these selected breeding and non-breeding MCRs for each species
+Spatial pattern can be shown as the relative proportions of individuals migrating between these selected breeding and non-breeding Migration Conservation Rregions for each species.
 
 ```{r}
 # Take a look at the distributions at the start and end of the migration season
@@ -501,7 +505,3 @@ ggplot() +
   coord_sf(xlim = c(-150, -60), ylim = c(10, 80), expand = FALSE) +
   theme_void()
 ```
-
-# Limitations
-
-bottleneck problems requirement of tracking data
