@@ -5,6 +5,10 @@ output:
     toc: true
 ---
 
+# BirdFlowR package overview
+
+The goal of this section is to provide a walkthrough of key package functions and data structures.
+
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
@@ -26,7 +30,7 @@ if (!"remotes" %in% installed)
 if (!"rnaturalearthdata" %in% installed)
   install.packages("rnaturalearthdata")
 remotes::install_github("birdflow-science/BirdFlowModels")
-remotes::install_github("birdflow-science/BirdFlowR", build_vignettes = TRUE)
+remotes::install_github("birdflow-science/BirdFlowR", dependencies = TRUE)
 
 ```
 
@@ -81,9 +85,10 @@ plot(rts, bf)
 
 ```{r quick demo forecast}
 set.seed(0)
-initial_distribution <- get_distr(bf, 1)
-location <- sample_distr(initial_distribution)
-forcast <- predict(bf, distr = location, start = 1, end = 26, direction = "forward")
+start_distr <- get_distr(bf, 1)
+location <- sample_distr(start_distr)
+
+forcast <- predict(bf, distr = location, start = 1, end = 26)
 plot_distr(forcast[, c(1, 7, 14, 19)], bf, dynamic_scale = TRUE)
 ```
 
@@ -166,13 +171,7 @@ Each BirdFlow model has a **static mask** that defines which cells are *active* 
 knitr::include_graphics("package_overview/DistributionDataStructures.png")
 ```
 
-Qualities of distributions:
 
-- A single distribution is a numeric vector of length `n_active(bf)`, one value per active cell.
-- Multiple distributions are stored as a matrix with `n_active(bf)` rows and one column per timestep.
-- Usually values sum to 1, and each gives the proportion of the population in the corresponding cell.
-- They are model-specific: each BirdFlow model has its own extent and mask, so a distribution from one model cannot be used with another.
-- The distribution cannot represent, and the model cannot work with, data outside of the static mask.
 
 ### Spatial index conversions
 
@@ -195,6 +194,15 @@ latlon_to_xy(lat = 42.4, lon = -72.5, bf) |> xy_to_i(bf = bf)
 ```
 
 Not shown above are conversions to row and column indices. See help for `i_to_rc()` or any of the above functions for a complete list of spatial conversions.
+
+### Qualities of distributions:
+
+- A single distribution is a numeric vector of length `n_active(bf)`, one value per active cell.
+- Multiple distributions are stored as a matrix with `n_active(bf)` rows and one column per timestep.
+- Usually values sum to 1, and each gives the proportion of the population in the corresponding cell.
+- They are model-specific: each BirdFlow model has its own extent and mask, so a distribution from one model cannot be used with another.
+- The distribution cannot represent, and the model cannot work with, data outside of the static mask.
+
 
 ### Retrieve distributions
 
@@ -247,8 +255,8 @@ plot(r)
 `plot_distr()` will make pretty **ggplot2** plots that handle conversion to raster, overlaying the coastline, and by default shows the static mask.
 
 ```{r plot_distr}
-get_distr(bf, species_info(bf, "prebreeding_migration_start")) |>
-  plot_distr(bf=bf)
+d <- get_distr(bf, species_info(bf, "prebreeding_migration_start")) 
+plot_distr(d, bf=bf)
 ```
 
 You can also animate over distributions.
@@ -258,6 +266,9 @@ get_distr(bf, lookup_timestep_sequence(bf, season = "prebreeding")) |>
   animate_distr(bf=bf)
 
 ```
+
+
+
 
 ## Forecasting
 
@@ -294,8 +305,7 @@ See `as_distr()` for additional ways to create the starting distribution.
 The plot shows where birds that winter at a particular location are likely to be as the year progresses and ultimately where they might spend their summer. The probability density spreads as the weeks progress.
 
 ```{r predict, out.width='100%'}
-f <- predict(bf, distr = location, start = start, end = end,
-             direction = "forward")
+f <- predict(bf, distr = location, start = start, end = end)
 
 plot_distr(f[, c(1, 7, 14, 19)], bf)
 
@@ -373,7 +383,7 @@ head(rts$data, 4)
 If locations are not provided, `route()` will sample starting locations from the starting distribution, so the following is equivalent to the preceding two sections.
 
 ```{r route with sample}
-rts2 <- route(bf,  n = n_routes,  start = start, end = end)
+rts2 <- route(bf, n = n_routes,  start = start, end = end)
 ```
 
 We can specify the date range with any arguments supported by `lookup_timestep_sequence()`, so an alternative to the above with slightly different start and end dates is to use the season argument. Here, we route during the prebreeding migration.
@@ -395,6 +405,9 @@ Routes can also be animated.
 ```{r animate_routes, warning= FALSE, message = FALSE}
 animate_routes(rts3, bf)
 ```
+
+
+
 
 ## Model attributes
 
