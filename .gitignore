@@ -3,5 +3,7 @@
 .Rhistory
 .Rproj.user
 
+2_Migration_phenology/downloaded_models/*
+
 # Rendered output at the top level (source .Rmd files are tracked)
 /*.html
