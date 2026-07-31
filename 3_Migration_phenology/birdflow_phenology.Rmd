@@ -18,10 +18,11 @@ params:
   n_routes: 2000
   output_dir: "outputs"
   extension_n_routes: 50000
-  h3_resolution: 2
 ---
 
 ```{r setup, include=FALSE}
+set.seed(42)
+
 knitr::opts_chunk$set(
   echo = TRUE,
   message = TRUE,
@@ -111,14 +112,12 @@ library(dplyr)
 library(ggplot2)
 library(scales)
 library(tibble)
+library(patchwork)
 
 options(tibble.width = Inf)
 
 source("phenology_utils.R")
 
-if (file.exists("filter_track.R")) {
-  source("filter_track.R")
-}
 ```
 
 # BirdFlow model collection
@@ -154,7 +153,7 @@ bf
 BirdFlowR::lookup_season_timesteps(bf,season = "prebreeding")
 ```
 
-```{r example-season-dates}
+```{r season-dates}
 bf$dates #lookup_date
 
 ```
@@ -187,6 +186,7 @@ region
 
 ```{r route-map}
 # Extract routes
+set.seed(42)
 routes <- BirdFlowR::route(
   bf,
   n = 200,
@@ -268,7 +268,8 @@ spring_case <- run_phenology_case_study(
   lat_max = region$lat_max,
   season = "prebreeding",
   n_routes = params$n_routes,
-  filter_tracks = FALSE
+  filter_tracks = FALSE,
+  seed = 42
 )
 
 # Simulate weekly enter-leave pattern (important)
@@ -447,7 +448,8 @@ fall_case <- run_phenology_case_study(
   lat_max = region$lat_max,
   season = "postbreeding",
   n_routes = params$n_routes,
-  filter_tracks = FALSE
+  filter_tracks = FALSE,
+  seed = 42
 )
 
 fall_weekly <- fall_case$weekly_movement
@@ -580,7 +582,8 @@ case_a <- run_phenology_case_study(
   lat_max = region_a$lat_max,
   season = "prebreeding",
   n_routes = 2000,
-  filter_tracks = FALSE
+  filter_tracks = FALSE,
+  seed = 42
 )
 
 case_b <- run_phenology_case_study(
@@ -591,7 +594,8 @@ case_b <- run_phenology_case_study(
   lat_max = region_b$lat_max,
   season = "prebreeding",
   n_routes = 2000,
-  filter_tracks = FALSE
+  filter_tracks = FALSE,
+  seed = 42
 )
 
 p_a <- plot_immigration_emigration(
@@ -673,7 +677,8 @@ spring_case <- run_phenology_case_study(
   lat_max = my_region$lat_max,
   season = "prebreeding",
   n_routes = params$n_routes,
-  filter_tracks = FALSE
+  filter_tracks = FALSE,
+  seed = 42
 )
 
 spring_weekly <- spring_case$weekly_movement

@@ -34,13 +34,18 @@ simulate_birdflow_routes <- function(
     n_routes = 2000,
     season_buffer = 1,
     from_marginals = FALSE,
-    filter_tracks = FALSE
+    filter_tracks = FALSE,
+    seed = NULL
 ) {
   dates <- get_season_dates(
     bf = bf,
     season = season,
     season_buffer = season_buffer
   )
+  
+  if (!is.null(seed)) {
+    set.seed(seed)
+  }
   
   sim_routes <- BirdFlowR::route(
     bf,
@@ -378,7 +383,8 @@ run_phenology_case_study <- function(
     season,
     n_routes = 1000,
     season_buffer = 1,
-    filter_tracks = FALSE
+    filter_tracks = FALSE,
+    seed = NULL
 ) {
   
   sim_data <- simulate_birdflow_routes(
@@ -386,7 +392,8 @@ run_phenology_case_study <- function(
     season = season,
     n_routes = n_routes,
     season_buffer = season_buffer,
-    filter_tracks = filter_tracks
+    filter_tracks = filter_tracks,
+    seed = seed
   )
   
   weekly_movement <- calculate_weekly_movement(
