@@ -1,5 +1,5 @@
 ---
-title: "Restructure Movement"
+title: "Restructuring Movement"
 output:
   html_document:
     toc: true
@@ -8,7 +8,7 @@ editor_options:
     wrap: 72
 ---
 
-# Restructure movement
+# Restructuring movement
 
 ```{r setup, include = FALSE}
 knitr::opts_chunk$set(
@@ -47,7 +47,7 @@ outbreak and infer interstate movements. They wanted to add a predictor
 of wild bird movement rates to their model of viral movement.
 
 ```{r h5n1-phylogeny, echo = FALSE, out.width = "100%", fig.align = "center", fig.cap = "Time-calibrated phylogeny of H5N1 2.3.4.4b genome segment HA. Each genome is connected to the available geographic location in the United States. One genome sampled in the United States does not have state-level resolution and is colored the same as other genomes in North America. Violin centered on the most recent common ancestor (MRCA) of the viruses sampled in cattle represents the 95% highest posterior density (HPD) of the time of this most recent common ancestor (tMRCA)."}
-knitr::include_graphics("restructuring_movement/h5n1_phylogeny.png")
+knitr::include_graphics("h5n1_phylogeny.png")
 ```
 
 Figure 4 from Worobey, M., et al. 2024. [Preliminary report on genomic
