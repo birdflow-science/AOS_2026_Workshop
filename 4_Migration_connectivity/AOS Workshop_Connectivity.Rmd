@@ -64,8 +64,6 @@ While in research, it involves tuning and selecting the best model among many ca
 For this tutorial, we will look at the Long-billed Curlew (lobcur).
 
 ```{r}
-setwd("~/Documents/GitHub/BirdFlow_connectivity/AOS_workshop")
-
 # Load necessary libraries
 invisible(lapply(c("dplyr", "ggplot2", "rnaturalearth", "terra", "sf", "BirdFlowR", "readr", "purrr", "janitor", "lubridate", "tidyr"), library, character.only = TRUE))
 
