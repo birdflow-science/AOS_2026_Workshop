@@ -37,7 +37,6 @@ remotes::install_github("birdflow-science/BirdFlowR", dependencies = TRUE)
 ### Load libraries
 
 ```{r setup}
-library(BirdFlowModels)
 library(BirdFlowR)
 library(terra)
 library(sf)
@@ -46,7 +45,7 @@ library(ggplot2)
 
 ### Load model
 
-The BirdFlow Science team has shared a [collection of fitted models](https://birdflow-science.s3.amazonaws.com/2026/index.html) for use with the BirdFlowR package; as of mid-2026 the collection includes 60 vetted species. The website includes reports on each species that include a visualizations of the distribution it was trained on and the BirdFlow Migration Traffic Rate (BMTR), as well as information on the model quality.
+The BirdFlow Science team has shared a [collection of fitted models](https://birdflow-science.s3.amazonaws.com/2026/index.html) for use with the BirdFlowR package; as of mid-2026 the collection includes 60 vetted species. The website includes reports on each species with visualizations of the distribution it was trained on and the BirdFlow Migration Traffic Rate (BMTR), as well as information on the model quality.
 
 A separate [Avian Influenza collection](https://birdflow-science.s3.amazonaws.com/avian_flu/index.html) is also available, providing models used for HPAI spread risk analysis.
 
@@ -58,7 +57,7 @@ index <- load_collection_index()
 head(index[, c("model", "species_code", "common_name")])
 ```
 
-And we can load a model from the collection based on the `model` or `species` columns from the index.
+And we can load a model from the collection based on the `model` or `species_code` columns from the index.
 
 ```{r load model}
 # Load a specific model
@@ -88,8 +87,8 @@ set.seed(0)
 start_distr <- get_distr(bf, 1)
 location <- sample_distr(start_distr)
 
-forcast <- predict(bf, distr = location, start = 1, end = 26)
-plot_distr(forcast[, c(1, 7, 14, 19)], bf, dynamic_scale = TRUE)
+forecast <- predict(bf, distr = location, start = 1, end = 26)
+plot_distr(forecast[, c(1, 7, 14, 19)], bf, dynamic_scale = TRUE)
 ```
 
 ## Time
@@ -129,7 +128,7 @@ There are a variety of ways to specify time for these functions:
 - `start` and `n_steps`
 - `season` and `season_buffer` — uses season start and end dates from eBird and returned by `species_info()`
 
-With dates (formal or character) the direction in time is explicit, it will be backwards if the end date is earlier than the start. With all other inputs it is not explicit and defaults to forward in time. Use `direction = "backward"` to create a sequence backwards in time with non-date input.
+With dates (formal or character) the direction in time is explicit: it will be backwards if the end date is earlier than the start. With all other inputs it is not explicit and defaults to forward in time. Use `direction = "backward"` to create a sequence backwards in time with non-date input.
 
 Here we demonstrate the time input options with `lookup_timestep_sequence()`. All of these can also be used with `predict()` and `route()`.
 
@@ -165,13 +164,11 @@ lookup_timestep_sequence(bf, start = 1, end = 45, direction = "backward")
 
 **Distributions** are the standard format for raster data used by BirdFlow.
 
-Each BirdFlow model has a **static mask** that defines which cells are *active* — those with non-zero probability in at least one week of the eBird Status and Trends data the model was trained on. Distributions are a vector of values corresponding to the active cells in row major order.
+Each BirdFlow model has a **static mask** that defines which cells are *active* — those with non-zero probability in at least one week of the eBird Status and Trends data the model was trained on. A distribution is a vector of values corresponding to the active cells in row major order.
 
 ```{r distribution-figure, echo = FALSE, out.width = "100%", fig.cap = "BirdFlow distribution data structure: the raster mask selects active cells, which are stored as a flat vector (one distribution) or matrix (multiple distributions). Cells in gray are outside of the mask and not used by BirdFlow models."}
 knitr::include_graphics("DistributionDataStructures.png")
 ```
-
-
 
 ### Spatial index conversions
 
@@ -198,7 +195,7 @@ Not shown above are conversions to row and column indices. See help for `i_to_rc
 ### Qualities of distributions:
 
 - A single distribution is a numeric vector of length `n_active(bf)`, one value per active cell.
-- Multiple distributions are stored as a matrix with `n_active(bf)` rows and one column per timestep.
+- Multiple distributions are stored as a matrix with `n_active(bf)` rows and one column per distribution.
 - Usually values sum to 1, and each gives the proportion of the population in the corresponding cell.
 - They are model-specific: each BirdFlow model has its own extent and mask, so a distribution from one model cannot be used with another.
 - The distribution cannot represent, and the model cannot work with, data outside of the static mask.
@@ -206,7 +203,7 @@ Not shown above are conversions to row and column indices. See help for `i_to_rc
 
 ### Retrieve distributions
 
-We can retrieve the eBird distributions the model was trained on with `get_distr()`. Use timestep, character dates, date objects, or `"all"` to specify which distributions to retrieve.
+We can retrieve the eBird distributions the model was trained on with `get_distr()`. Use timesteps, character dates, date objects, or `"all"` to specify which distributions to retrieve.
 
 Retrieve the first distribution and compare its length to the number of active cells.
 
@@ -239,7 +236,7 @@ Use `rasterize_distr()` to convert a distribution to a SpatRaster defined in the
 ```{r get distributions}
 d <- get_distr(bf, c(1, 26)) # winter and summer
 r <- rasterize_distr(d, bf) # convert to SpatRaster (terra package)
-d2 <- as_distr(r, bf) # Convert a SpatRaster back to a distribution by default this renormalizes so each distribution sums to 1
+d2 <- as_distr(r, bf) # Convert a SpatRaster back to a distribution. By default this renormalizes so each distribution sums to 1
 ```
 
 Alternatively, convert directly from BirdFlow to SpatRaster with `rast()`. The second (optional) argument `which` accepts the same inputs as `which` in `get_distr()`.
@@ -252,7 +249,7 @@ plot(r)
 
 ### Plot distributions
 
-`plot_distr()` will make pretty **ggplot2** plots that handle conversion to raster, overlaying the coastline, and by default shows the static mask.
+`plot_distr()` will make pretty **ggplot2** plots that handle conversion to raster, overlay the coastline, and by default show the static mask.
 
 ```{r plot_distr}
 d <- get_distr(bf, species_info(bf, "prebreeding_migration_start")) 
@@ -267,12 +264,9 @@ get_distr(bf, lookup_timestep_sequence(bf, season = "prebreeding")) |>
 
 ```
 
-
-
-
 ## Forecasting
 
-`predict()` is used to project any distribution into the future or past. It shows where birds in a particular time and location, or set of locations will be in the future; or were likely to have been previously.
+`predict()` is used to project any distribution into the future or past. It shows where birds at a particular time and location, or set of locations, will be in the future, or were likely to have been previously.
 
 In this example, we will sample a single starting location from the winter distribution and project it forward to generate a distribution of predicted breeding grounds for birds that wintered at the starting location.
 
@@ -285,7 +279,7 @@ Set predict parameters.
 
 ### Sample starting distribution
 
-`sample_distr()` will sample from one or more input distributions to select a single location per distribution. The result is one or more distributions with ones in the selected location(s) and zero elsewhere.
+`sample_distr()` will sample from one or more input distributions to select a single location per distribution. The result is one or more distributions with ones in the selected location(s) and zeros elsewhere.
 
 ```{r starting location}
 set.seed(0)
@@ -332,12 +326,12 @@ Suppose we are interested in how the breeding distribution of birds from this pa
 
 ```{r probability over time}
 projected <- f[, ncol(f)]  # last projected distribution
-diff <-  projected - get_distr(bf, end)
+difference <-  projected - get_distr(bf, end)
 pal <- hcl.colors(3, palette = "Fall")
 
-plot_distr(diff, bf, value_label = "Difference") +
+plot_distr(difference, bf, value_label = "Difference") +
     # The scale_fill_gradient2 line is optional, it adds a divergent color scheme centered on zero.
-    scale_fill_gradient2(high = pal[1],mid = pal[2], low = pal[3], midpoint = 0, na.value = "transparent") +
+    scale_fill_gradient2(high = pal[1], mid = pal[2], low = pal[3], midpoint = 0, na.value = "transparent") +
     geom_point(aes(x = x, y = y), data = location_xy, inherit.aes = FALSE)
 ```
 
@@ -355,7 +349,8 @@ end <- 26          # ending timestep (summer)
 
 ### Generate starting locations
 
-First, extract the winter distribution, then use `sample_distr()` with `n = n_routes` to sample the input distribution repeatedly. The result is a matrix in which each column has a single '1' representing the sampled location.
+First, extract the winter distribution, then use `sample_distr()` with `n = n_routes` to sample start locations 
+from the input distribution.
 
 ```{r starting locations}
 d <- get_distr(bf, start)
@@ -368,12 +363,12 @@ Plot the starting (winter) distribution and sampled locations.
 
 ```{r plot starting distribution}
 plot_distr(d, bf) +
-  geom_point(aes(x = x, y =y), data = locations, inherit.aes = FALSE, color = "green")
+  geom_point(aes(x = x, y = y), data = locations, inherit.aes = FALSE, color = "green")
 ```
 
 ### Generate routes
 
-`route()` will generate synthetic routes for each starting position. `route()` returns a `BirdFlowRoutes` object which has a `$data` element with a row for each timestep of each route, but also includes some additional spatial, temporal, and species information from the `BirdFlow` object.
+`route()` will generate synthetic routes for each starting position. `route()` returns a `BirdFlowRoutes` object which has a `$data` element with a row for each timestep of each route, and also includes some additional spatial, temporal, and species information from the `BirdFlow` object.
 
 ```{r route, fig.show='hide'}
 rts <- route(bf, x_coord = x, y_coord = y, start = start, end = end)
@@ -425,6 +420,7 @@ bf # same as print(bf)
 n_active(bf)
 n_transitions(bf)
 n_timesteps(bf)
+n_distr(bf)
 
 # Contents
 has_marginals(bf)
@@ -471,7 +467,7 @@ BirdFlow objects also play nicely with the *sf* package.
 
 ```{r sf}
 bb <- sf::st_bbox(bf)
-crs <- sf::st_crs(bf)
+bf_crs <- sf::st_crs(bf)
 ```
 
 ### Metadata
@@ -483,3 +479,76 @@ md <- get_metadata(bf)  # list with all metadata
 get_metadata(bf, "birdflow_model_date") # date and time the BirdFlow model was fit
 get_metadata(bf, "ebird_version_year")  # eBird version year - generally a few years before the data is released
 ```
+
+
+## Exercises
+
+
+### 1. Explore predictions and forecasts with a different species and timeframe
+
+* Pick a species from the model collection. 
+* Change the `load_model()` line to load that species.  
+* Work through the prediction and forecast sections with your species. Try different date ranges. 
+* Run `predict()` back in time from a single location.  What does this tell you? 
+
+### 2. Import locations from elsewhere
+
+*  Pick a migration season and plot the species distribution at the beginning of the season.
+* Use Google Maps to pick several locations that are within the distribution, save the latitude and longitude.
+* Use those locations as the start of migration routes.
+* Use one or more of those locations to make a starting distribution and then forecast with `predict()`. 
+  The distribution should sum to 1.
+
+
+## Solutions
+
+### 1. Change species and time frame
+
+The result will depend on the time frame and species you pick.
+
+Predictions backwards in time show a probability distribution for where the birds at your input distribution were
+coming from.  
+
+### 2. Import locations from elsewhere
+
+To route from your location you need to convert latitude and longitude to x and y coordinates.
+```{r}
+start <- lookup_timestep_sequence(bf, season = "prebreeding")[1]
+d <- get_distr(bf, start)
+plot_distr(d, bf)
+
+
+latlon <- data.frame(lat = c(37.71588,35.97855), lon = c(-78.75591, -82.58683))
+xy <- latlon_to_xy(latlon, bf = bf)
+rts <- route(bf, x_coord = xy$x, y_coord = xy$y, season = "prebreeding")
+plot(rts, bf)
+```
+There are a couple ways to make a distribution
+```{r}
+# as_distr() will make a separate one-hot distribution for each input point
+multiple_distr <- as_distr(xy, bf)
+
+# If we started with multiple points and want them in one distribution
+# we can use row sums and then normalize to a sum of 1
+d1 <- rowSums(multiple_distr) / sum(multiple_distr)
+
+# Alternatively we can convert locations to a state index (i) and construct a distribution from scratch
+d2 <- rep(0, n_active(bf))
+i <- latlon_to_xy(latlon, bf = bf) |> xy_to_i(bf = bf)
+d2[i] <- 1/length(i) 
+
+# they are equivalent
+all.equal(d1, d2) 
+
+forecast <- predict(bf, distr = d1, season = "prebreeding")
+
+animate_distr(forecast, bf, transform = "sqrt")
+
+
+```
+
+
+
+
+
+
